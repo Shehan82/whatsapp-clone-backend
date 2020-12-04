@@ -24,8 +24,9 @@ db.once('open', ()=>{
         {
             const messageDetails = change.fullDocument;
             pusher.trigger('messages', 'inserted', {
-                name:messageDetails.user,
+                name:messageDetails.name,
                 message:messageDetails.message,
+                timestamp:messageDetails.timestamp,
             })
         }
         else
@@ -43,6 +44,13 @@ const pusher = new Pusher({
     cluster: "eu",
     useTLS: true
   });
+
+
+app.use((req,res,next)=>{
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    next();
+})
 
 //middleware
 app.use(express.json());
