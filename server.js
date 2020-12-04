@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
-import Messages from "./dbMasseges.js"
+import Messages from "./dbMasseges.js";
+import Pusher from "pusher";
 const app = express();
 
 // db config
@@ -9,7 +10,24 @@ mongoose.connect(url,{
     useCreateIndex: true,
     useNewUrlParser:true,
     useUnifiedTopology:true,
+});
+
+const db = mongoose.connection;
+db.once('open', ()=>{
+    console.log("DB is connected!");
+
+    const msgCollection = db.collection("messageContent");
+    const changeStream = msgCollection.watch();
 })
+
+//pusher config
+const pusher = new Pusher({
+    appId: "1117667",
+    key: "bae7fff4f6e77102979d",
+    secret: "ebfab8f3b39611a9ed0c",
+    cluster: "eu",
+    useTLS: true
+  });
 
 //middleware
 app.use(express.json());
